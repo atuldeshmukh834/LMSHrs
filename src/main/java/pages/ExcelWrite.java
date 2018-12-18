@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
@@ -52,6 +53,7 @@ public class ExcelWrite extends InOutTime {
 	}
 	
 	static XSSFRow row;
+		 
 	static XSSFCell cell;
 	
 	@Test
@@ -68,6 +70,8 @@ public class ExcelWrite extends InOutTime {
 
 		 XSSFSheet sh1 = workbook.getSheet("Sheet0");
 		 
+		 //int row1 = sh1.getLastRowNum()+1;
+		 
 		 CellStyle Style = workbook.createCellStyle();
    	     Style.setBorderLeft(BorderStyle.MEDIUM);
          Style.setBorderRight(BorderStyle.MEDIUM);
@@ -80,9 +84,72 @@ public class ExcelWrite extends InOutTime {
 		//if(workbook.getNumberOfSheets()!=0)
 		
 		if(workbook.getNumberOfSheets()!=0){
-			sh1 = workbook.createSheet(firstName);;
-	    	   for (int i = 0; i < Date.size(); i++) {
-	    		  Row header = sh1.createRow(0);
+			sh1 = workbook.createSheet(firstName);
+			
+			  Row header = sh1.createRow(0);
+    		  XSSFCellStyle style = workbook.createCellStyle();
+    		  
+    		  XSSFFont font = workbook.createFont();
+    		  font.setBold(true);
+    		  style.setFont(font);
+    		  font.setColor(XSSFFont.COLOR_RED);
+ 	   		  header.createCell(0).setCellValue("Date");
+ 	   		  header.createCell(1).setCellValue("Swipe - In");
+ 	   		  header.createCell(2).setCellValue("Swipe - Out");
+ 	   		  header.createCell(3).setCellValue("Total Hrs");
+ 	   		  style.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
+ 	   	      style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+ 	   		  header.getCell(0).setCellStyle(style);
+ 	   		  header.getCell(1).setCellStyle(style);
+ 	   		  header.getCell(2).setCellStyle(style);
+ 	   	      header.getCell(3).setCellStyle(style);
+ 	   	      style.setBorderLeft(BorderStyle.MEDIUM);
+ 	   	      style.setBorderRight(BorderStyle.MEDIUM);
+              style.setBorderTop(BorderStyle.MEDIUM);
+              style.setBorderBottom(BorderStyle.MEDIUM);
+			
+	    	   for (int i = 1; i < Date.size()+1; i++) {
+	    		
+                  //cell.setCellStyle(Style);
+
+	    		   
+	   			row = sh1.createRow(i);
+	   			 
+	   			cell = row.createCell(0);
+	   			cell.setCellValue(Date.get(i-1));
+	   			/*//CellStyle Style = workbook.createCellStyle();  
+	            Style.setBorderLeft(BorderStyle.MEDIUM);
+	            Style.setBorderRight(BorderStyle.MEDIUM);
+	            Style.setBorderTop(BorderStyle.MEDIUM);
+	            Style.setBorderBottom(BorderStyle.MEDIUM);*/
+	            cell.setCellStyle(Style);
+			
+	   			cell = row.createCell(1);
+	   			cell.setCellValue(SwipeIN.get(i-1));
+	            cell.setCellStyle(Style);
+	            Style.setAlignment(HorizontalAlignment.CENTER);
+	   			
+	   			cell = row.createCell(2);
+	   			cell.setCellValue(SwipeOut.get(i-1));
+	            cell.setCellStyle(Style);
+	   			
+	   			cell = row.createCell(3);
+	   			cell.setCellValue(TotalHrs.get(i-1));
+	   			cell.setCellStyle(Style);
+	   			
+	   		/*	XSSFSheetConditionalFormatting my_cond_format_layer = sh1.getSheetConditionalFormatting();
+	            XSSFConditionalFormattingRule my_rule = my_cond_format_layer.
+	            		createConditionalFormattingRule(ComparisonOperator.LT, "21600");
+	            XSSFFontFormatting my_rule_pattern = my_rule.createFontFormatting();
+                my_rule_pattern.setFontColorIndex(IndexedColors.RED.getIndex());
+                ConditionalFormattingRule [] multiple_rules = {my_rule};
+                CellRangeAddress[] my_data_range = {CellRangeAddress.valueOf("D2:D30")};
+                my_cond_format_layer.addConditionalFormatting(my_data_range,multiple_rules);*/
+	   			
+	   		}
+	      }else{
+	    	   sh1 = workbook.createSheet(firstName);
+	    	      Row header = sh1.createRow(0);
 	    		  XSSFCellStyle style = workbook.createCellStyle();
 	    		  
 	    		  XSSFFont font = workbook.createFont();
@@ -103,48 +170,10 @@ public class ExcelWrite extends InOutTime {
 	 	   	      style.setBorderRight(BorderStyle.MEDIUM);
 	              style.setBorderTop(BorderStyle.MEDIUM);
 	              style.setBorderBottom(BorderStyle.MEDIUM);
-                  //cell.setCellStyle(Style);
+	    	   
+	    	   for (int i = 1; i < Date.size()+1; i++) {
 
-	    		   
-	   			row = sh1.createRow(i);
-	   			 
-	   			cell = row.createCell(0);
-	   			cell.setCellValue(Date.get(i));
-	   			/*//CellStyle Style = workbook.createCellStyle();  
-	            Style.setBorderLeft(BorderStyle.MEDIUM);
-	            Style.setBorderRight(BorderStyle.MEDIUM);
-	            Style.setBorderTop(BorderStyle.MEDIUM);
-	            Style.setBorderBottom(BorderStyle.MEDIUM);*/
-	            cell.setCellStyle(Style);
-			
-	   			cell = row.createCell(1);
-	   			cell.setCellValue(SwipeIN.get(i));
-	            cell.setCellStyle(Style);
-	            Style.setAlignment(HorizontalAlignment.CENTER);
-	   			
-	   			cell = row.createCell(2);
-	   			cell.setCellValue(SwipeOut.get(i));
-	            cell.setCellStyle(Style);
-	   			
-	   			cell = row.createCell(3);
-	   			cell.setCellValue(TotalHrs.get(i));
-	   			cell.setCellStyle(Style);
-	   			
-	   			XSSFSheetConditionalFormatting my_cond_format_layer = sh1.getSheetConditionalFormatting();
-	            XSSFConditionalFormattingRule my_rule = my_cond_format_layer.
-	            		createConditionalFormattingRule(ComparisonOperator.LT, "21600");
-	            XSSFFontFormatting my_rule_pattern = my_rule.createFontFormatting();
-                my_rule_pattern.setFontColorIndex(IndexedColors.RED.getIndex());
-                ConditionalFormattingRule [] multiple_rules = {my_rule};
-                CellRangeAddress[] my_data_range = {CellRangeAddress.valueOf("D2:D30")};
-                my_cond_format_layer.addConditionalFormatting(my_data_range,multiple_rules);
-	   			
-	   		}
-	      }else{
-	    	   sh1 = workbook.createSheet(firstName);
-	    	   for (int i = 0; i < Date.size(); i++) {
-
-	    		   Row header = sh1.createRow(0);
+	    		  /* Row header = sh1.createRow(0);
 		    		  XSSFCellStyle style = workbook.createCellStyle();
 		    		  
 		    		  XSSFFont font = workbook.createFont();
@@ -164,7 +193,7 @@ public class ExcelWrite extends InOutTime {
 		 	   	      style.setBorderLeft(BorderStyle.MEDIUM);
 	 	   	          style.setBorderRight(BorderStyle.MEDIUM);
 	                  style.setBorderTop(BorderStyle.MEDIUM);
-	                  style.setBorderBottom(BorderStyle.MEDIUM);
+	                  style.setBorderBottom(BorderStyle.MEDIUM);*/
 		 	   	      /*CellStyle Style = workbook.createCellStyle();
 	 	   	          Style.setBorderLeft(BorderStyle.MEDIUM);
                       Style.setBorderRight(BorderStyle.MEDIUM);
@@ -175,7 +204,7 @@ public class ExcelWrite extends InOutTime {
 		   			row = sh1.createRow(i);
 		   			 
 		   			cell = row.createCell(0);
-		   			cell.setCellValue(Date.get(i));
+		   			cell.setCellValue(Date.get(i-1));
 		   			//CellStyle Style = workbook.createCellStyle();  
 		            /*Style.setBorderLeft(BorderStyle.MEDIUM);
 		            Style.setBorderRight(BorderStyle.MEDIUM);
@@ -184,21 +213,30 @@ public class ExcelWrite extends InOutTime {
 		            cell.setCellStyle(Style);
 		            
 		   			cell = row.createCell(1);
-		   			cell.setCellValue(SwipeIN.get(i));
+		   			cell.setCellValue(SwipeIN.get(i-1));
 		            cell.setCellStyle(Style);
 		            Style.setAlignment(HorizontalAlignment.CENTER);
 		           
 		            
 		   			cell = row.createCell(2);
-		   			cell.setCellValue(SwipeOut.get(i));
+		   			cell.setCellValue(SwipeOut.get(i-1));
 		            cell.setCellStyle(Style);
 		            
 		   			cell = row.createCell(3);
-		   			cell.setCellValue(TotalHrs.get(i));
+		   			cell.setCellValue(TotalHrs.get(i-1));
 		            cell.setCellStyle(Style);
+		            
+		            String time = TotalHrs();
+		      	    String[] split = time.split(":"); 
+		      	    if(split.length == 2) { 
+		      	          long minutes = TimeUnit.HOURS.toMinutes(Integer.parseInt(split[0])) + 
+		      	                           Integer.parseInt(split[1]);
+		      	          System.out.println("Test"+minutes);
+		      	      }
 		   			
-		   			//RegionUtil.setBorderBottom(BorderStyle.DOUBLE,
-		   		    // CellRangeAddress.valueOf("A1:B7"), sh1);
+		            /*String Time=TotalHrs();
+		   			Double Dvalue= Double.parseDouble(Time);
+		   			System.out.println("Convert Total Hrs is"+Dvalue);
 		   			
 		            XSSFSheetConditionalFormatting my_cond_format_layer = sh1.getSheetConditionalFormatting();
 		            XSSFConditionalFormattingRule my_rule = my_cond_format_layer.
@@ -207,7 +245,7 @@ public class ExcelWrite extends InOutTime {
 	                my_rule_pattern.setFontColorIndex(IndexedColors.RED.getIndex());
 	                ConditionalFormattingRule [] multiple_rules = {my_rule};
 	                CellRangeAddress[] my_data_range = {CellRangeAddress.valueOf("D2:D30")};
-	                my_cond_format_layer.addConditionalFormatting(my_data_range,multiple_rules);
+	                my_cond_format_layer.addConditionalFormatting(my_data_range,multiple_rules);*/
 	    	   }
 	    	   
 		}
